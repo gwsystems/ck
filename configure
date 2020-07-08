@@ -623,6 +623,22 @@ if test "$PROFILE"; then
 	generate include/ck_md.h.in include/ck_md.h
 	generate include/freebsd/ck_md.h.in include/freebsd/ck_md.h
 	echo "success"
+
+	LD=$CC
+	SONAME="$LDNAME_MAJOR"
+	LDFLAGS="-Wl,$CC_WL_OPT,$SONAME $LDFLAGS"
+	if test "$WANT_PIC" = "yes"; then
+		LDFLAGS="$LDFLAGS -shared -fPIC"
+		CFLAGS="$CFLAGS -fPIC"
+		ALL_LIBS="libck.so libck.a"
+		INSTALL_LIBS="install-so install-lib"
+	else
+		LDFLAGS="$LDFLAGS -fno-PIC"
+		CFLAGS="$CFLAGS -fno-PIC"
+		ALL_LIBS="libck.a"
+		INSTALL_LIBS="install-lib"
+	fi
+
 	printf "Generating build files..........."
 	generate src/Makefile.in src/Makefile
 	generate doc/Makefile.in doc/Makefile
